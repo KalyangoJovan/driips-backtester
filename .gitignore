@@ -1,0 +1,25 @@
+# Vendor / market data never gets committed
+data/*.csv
+*.csv
+# ...but derived per-trade summary tables under results/ are allowed
+!results/**/*.csv
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Environment & logs
+.env
+*.log
+logs/
+
+# OS / editor
+.DS_Store
+Thumbs.db

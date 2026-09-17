@@ -56,11 +56,11 @@ post-OOS forward sample.
 | Total R, gross | +292.95 | +34.67 |
 | Total R, net | +277.32 | +33.40 |
 | Avg net R / trade | 1.20 | 1.19 |
-| Sharpe (annualized, full period, unconditional) | 6.75 | 7.35 |
-| Sharpe (traded days only — conditional) | 8.02 | 8.89 |
 | Max drawdown (net R) | −2.80 | −3.14 |
 | Max drawdown duration (sessions) | 10 | 3 |
 | Sessions with exposure | 75.3% | 73.3% |
+| R-unit Sharpe (annualized, unconditional) | 6.75 | 7.35 |
+| R-unit Sharpe (traded days only — conditional) | 8.02 | 8.89 |
 
 **Base variant (sequenced entries):**
 
@@ -70,15 +70,22 @@ post-OOS forward sample.
 | Hit rate (TP1 reached) | 74.5% | 75.0% |
 | Total R, gross | +278.49 | +32.32 |
 | Total R, net | +263.80 | +31.21 |
-| Sharpe (annualized, full period, unconditional) | 7.52 | 7.79 |
 | Max drawdown (net R) | −6.34 | −2.09 |
+| R-unit Sharpe (annualized, unconditional) | 7.52 | 7.79 |
 
-The headline Sharpe is always the full-period, honestly-annualized
-figure: per-session returns include every usable cash session in the
-window, flat sessions counted as zero. The Sharpe conditioned on traded
-days only is labelled conditional and shown second. Full metrics table,
-equity curve, and R distribution are in [`results/`](results/README.md),
-each labelled with period, mode, split, and cost assumptions.
+### A note on the Sharpe figure
+
+The Sharpe rows are computed on per-session risk-unit (R) returns of a
+single intraday strategy whose scale-out and breakeven-runner mechanics
+structurally suppress losing sessions. That makes the figure **not
+comparable to portfolio-level Sharpe ratios on dollar returns** —
+readers should weight the trade-level statistics and the drawdown
+figures more heavily. The unconditional figure is honestly annualized
+over the full period, every usable cash session included and flat
+sessions counted as zero; the Sharpe conditioned on traded days only is
+labelled conditional and shown last. Full metrics table, equity curve,
+and R distribution are in [`results/`](results/README.md), each labelled
+with period, mode, split, and cost assumptions.
 
 ## Reproduction
 
@@ -120,6 +127,11 @@ jupyter notebook notebooks/backtest.ipynb         # run all cells
 - **Capacity.** The strategy trades moments of thin, one-sided depth by
   design. It is a small-size strategy; the backtest says nothing about
   execution at institutional size.
+
+As corroboration of the cost and fill assumptions: the held-out-year
+backtest (+277.3R across 231 trades) agrees within about 4% with the
+strategy's automated live execution over the same year (approximately
++274R across ~222 trades, in R terms).
 
 ## License
 

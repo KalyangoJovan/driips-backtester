@@ -5,8 +5,8 @@ hit_rate_pct,75.8,74.5,78.6,75.0
 total_R_gross,292.95,278.49,34.67,32.32
 total_R_net,277.32,263.8,33.4,31.21
 avg_R_net_per_trade,1.201,1.244,1.193,1.3
-sharpe_annualized,6.75,7.52,7.35,7.79
-sharpe_traded_days_only (conditional),8.02,9.0,8.89,9.48
 max_drawdown_R,-2.8,-6.34,-3.14,-2.09
 max_drawdown_duration_sessions,10.0,16.0,3.0,3.0
 pct_sessions_with_exposure,75.3,75.3,73.3,73.3
+R_unit_sharpe_annualized (unconditional),6.75,7.52,7.35,7.79
+R_unit_sharpe_traded_days_only (conditional),8.02,9.0,8.89,9.48

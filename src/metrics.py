@@ -2,12 +2,16 @@
 
 Reporting standard implemented here (and mirrored in the notebook):
 
-- Gross AND net figures, with the cost assumptions stated by the caller.
-- The headline Sharpe ratio is the honestly-annualized, full-period
-  figure: the per-session net R series includes EVERY session in the
-  data window, counting flat sessions as zero. A Sharpe conditioned on
-  invested days only is also computed, but it must always be labelled
-  as conditional and shown after the unconditional figure.
+- Trade-level statistics lead the summary: trade count, hit rate,
+  total R gross and net, average R per trade, max drawdown in R with
+  its duration, and exposure.
+- The Sharpe rows are R-unit Sharpe ratios: honestly-annualized,
+  full-period figures on per-session risk-unit (R) returns, the
+  per-session net R series including EVERY session in the data window
+  with flat sessions counted as zero. They are not comparable to
+  portfolio-level Sharpe ratios on dollar returns. A Sharpe conditioned
+  on traded days only is also computed, but it must always be labelled
+  as conditional and shown last.
 - Max drawdown in R and max drawdown duration in sessions.
 - Percentage of sessions with any exposure.
 - Explicit in-sample / out-of-sample split via ``split_data``.
@@ -118,6 +122,9 @@ def summarize(trades_df, sessions, label=""):
             pd.to_datetime(trades_df["date"]).dt.normalize().unique())]
         cond_sharpe = sharpe_annualized(traded_r)
 
+    # Trade-level statistics lead; the R-unit Sharpe rows come after them,
+    # with the conditional figure labelled and last (see the Sharpe note in
+    # the README — it is not comparable to portfolio-level Sharpe ratios).
     return {
         "label": label,
         "sessions": int(n_sessions),
@@ -126,11 +133,11 @@ def summarize(trades_df, sessions, label=""):
         "total_R_gross": round(float(daily_gross.sum()), 2),
         "total_R_net": round(float(daily_net.sum()), 2),
         "avg_R_net_per_trade": round(float(trades_df.r.mean()), 3) if n else float("nan"),
-        "sharpe_annualized": round(sharpe_annualized(daily_net), 2),
-        "sharpe_traded_days_only (conditional)": round(cond_sharpe, 2),
         "max_drawdown_R": round(max_drawdown(eq_net), 2),
         "max_drawdown_duration_sessions": max_drawdown_duration(eq_net),
         "pct_sessions_with_exposure": round(100 * traded_days / n_sessions, 1) if n_sessions else float("nan"),
+        "R_unit_sharpe_annualized (unconditional)": round(sharpe_annualized(daily_net), 2),
+        "R_unit_sharpe_traded_days_only (conditional)": round(cond_sharpe, 2),
     }
 
 

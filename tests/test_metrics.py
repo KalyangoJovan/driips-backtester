@@ -84,7 +84,11 @@ def test_summarize_full_metrics():
     assert s["pct_sessions_with_exposure"] == pytest.approx(30.0)  # 3 of 10
     assert s["max_drawdown_R"] <= 0
     assert s["max_drawdown_duration_sessions"] >= 1
-    assert not math.isnan(s["sharpe_annualized"])
+    assert not math.isnan(s["R_unit_sharpe_annualized (unconditional)"])
+    # trade-level statistics lead; the conditional Sharpe is labelled and last
+    keys = list(s)
+    assert keys.index("trades") < keys.index("R_unit_sharpe_annualized (unconditional)")
+    assert keys[-1] == "R_unit_sharpe_traded_days_only (conditional)"
 
 
 def test_summarize_empty():

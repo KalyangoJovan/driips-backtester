@@ -34,26 +34,51 @@ The order of operations is the point:
 
 ## Results
 
-Values are **TBD** pending the real-data run (the repository ships no
-vendor data; see [Reproduction](#reproduction) and
-[`results/`](results/README.md)). Cost assumptions: 0.225 pts commission
-+ 0.5 pts slippage per round turn.
+From a REAL-mode run on Nasdaq-100 E-mini 1-minute exports covering
+**2025-07-04 → 2026-08-11** (285 usable cash sessions). Cost
+assumptions: 0.225 pts commission + 0.5 pts slippage per round turn,
+deducted in R; gross figures are before costs, net after.
 
-| Metric | IS gross | IS net | OOS gross | OOS net |
-|---|---|---|---|---|
-| Trades | TBD | TBD | TBD | TBD |
-| Hit rate (TP1 reached) | TBD | TBD | TBD | TBD |
-| Total R | TBD | TBD | TBD | TBD |
-| Avg R / trade | TBD | TBD | TBD | TBD |
-| Sharpe (annualized, full period) | TBD | TBD | TBD | TBD |
-| Max drawdown (R) | TBD | TBD | TBD | TBD |
-| Max drawdown duration (sessions) | TBD | TBD | TBD | TBD |
-| Sessions with exposure (%) | TBD | TBD | TBD | TBD |
+**Split.** The strategy was developed *before* this window, on data not
+shipped with the repository, so no in-sample figures are reproducible
+here — that is a feature of the split, not an omission: everything below
+is out of development's reach. The held-out out-of-sample year is
+**Jul 2025 – Jun 2026**; the remaining **Jul – Aug 2026** bars form a
+post-OOS forward sample.
+
+**Trend-continuation variant (validated configuration, max 3 entries):**
+
+| Metric | Held-out year (OOS) | Post-OOS forward |
+|---|---|---|
+| Sessions | 255 | 30 |
+| Trades | 231 | 28 |
+| Hit rate (TP1 reached) | 75.8% | 78.6% |
+| Total R, gross | +292.95 | +34.67 |
+| Total R, net | +277.32 | +33.40 |
+| Avg net R / trade | 1.20 | 1.19 |
+| Sharpe (annualized, full period, unconditional) | 6.75 | 7.35 |
+| Sharpe (traded days only — conditional) | 8.02 | 8.89 |
+| Max drawdown (net R) | −2.80 | −3.14 |
+| Max drawdown duration (sessions) | 10 | 3 |
+| Sessions with exposure | 75.3% | 73.3% |
+
+**Base variant (sequenced entries):**
+
+| Metric | Held-out year (OOS) | Post-OOS forward |
+|---|---|---|
+| Trades | 212 | 24 |
+| Hit rate (TP1 reached) | 74.5% | 75.0% |
+| Total R, gross | +278.49 | +32.32 |
+| Total R, net | +263.80 | +31.21 |
+| Sharpe (annualized, full period, unconditional) | 7.52 | 7.79 |
+| Max drawdown (net R) | −6.34 | −2.09 |
 
 The headline Sharpe is always the full-period, honestly-annualized
-figure: per-session returns include every session in the window, flat
-sessions counted as zero. Any Sharpe conditioned on invested days only
-is labelled as conditional and shown second.
+figure: per-session returns include every usable cash session in the
+window, flat sessions counted as zero. The Sharpe conditioned on traded
+days only is labelled conditional and shown second. Full metrics table,
+equity curve, and R distribution are in [`results/`](results/README.md),
+each labelled with period, mode, split, and cost assumptions.
 
 ## Reproduction
 
@@ -69,17 +94,20 @@ jupyter notebook notebooks/backtest.ipynb         # run all cells
   notebook generates deterministic synthetic sessions and runs the full
   pipeline end to end. The banner and every output are labelled
   SYNTHETIC — these numbers validate the code path, not the strategy.
-- **Own-data mode.** Export 1-minute bars from TradingView into `data/`
+- **Real mode.** Export 1-minute bars from TradingView into `data/`
   (format and steps in [`data/README.md`](data/README.md)) and re-run
-  the notebook; it auto-detects the CSVs and labels the run OWN-DATA.
-  Set the out-of-sample start date in the notebook's parameters cell to
-  reproduce the IS/OOS split.
+  the notebook; it auto-detects the CSVs, labels the run REAL, and
+  exports labelled result artifacts to `results/`. The parameters cell
+  pins the held-out year (`OOS_START = 2025-07-01`,
+  `OOS_END = 2026-07-01`) so the published split reproduces exactly.
 
 ## Limitations
 
-- **Sample size.** An opening-session strategy takes at most a few
-  trades per day and skips many days; confidence intervals on hit rate
-  and expectancy are wide at these trade counts.
+- **Sample size.** The held-out year contains 231 trades (259 including
+  the forward sample) — enough to estimate a hit rate, but confidence
+  intervals on expectancy and especially on tail metrics like max
+  drawdown are still wide at these counts; one year of sessions is one
+  draw of the calendar.
 - **Single-instrument concentration.** All evidence is from one index
   future. Nothing here demonstrates transfer to other instruments.
 - **Regime dependence.** The edge is a property of how the 09:30
